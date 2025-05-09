@@ -34,13 +34,48 @@ public class CommentService {
     }
 
     public Optional<Comment> updateComment(String id, Comment commentDetails) {
-        return commentRepository.findById(id)
-                .map(existingComment -> {
-                    existingComment.setContent(commentDetails.getContent());
-                    existingComment.setUpdatedAt(LocalDateTime.now());
-                    return commentRepository.save(existingComment);
-                });
+
+      return commentRepository.findById(commentId)
+            .map(existing -> {
+        trackChanges(existing, updatedComment, editorId);
+        return commentRepository.save(existing);
+    })
+            .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
+}
+
+private void trackChanges(Comment existing, Comment updated, String editorId) {
+    try {
+        Field[] fields = Comment.class.getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+
+         
+            if (List.of("id", "createdAt", "updatedAt", "editHistory", "childIds").contains(field.getName())) {
+                continue;
+            }
+
+            Object oldValue = field.get(existing);
+            Object newValue = field.get(updated);
+
+            if (newValue != null && !newValue.equals(oldValue)) {
+                existing.getEditHistory().add(new EditHistory(
+                        LocalDateTime.now(),
+                        field.getName(),
+                        oldValue,
+                        newValue,
+                        editorId
+                ));
+                field.set(existing, newValue);
+            }
+        }
+
+        existing.setUpdatedAt(LocalDateTime.now());
+    } catch (IllegalAccessException e) {
+        throw new RuntimeException("Failed to track changes via reflection", e);
     }
+}
+}
 
     public boolean deleteComment(String id) {
         if (commentRepository.existsById(id)) {

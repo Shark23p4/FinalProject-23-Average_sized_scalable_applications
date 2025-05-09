@@ -34,6 +34,13 @@ public class Comment {
         this.upvotes = 0;
         this.downvotes = 0;
     }
+    public record EditHistory(
+            LocalDateTime timestamp,
+            String fieldName,
+            Object oldValue,
+            Object newValue,
+            String editedBy 
+    ) {}
 
     // Getters and Setters
     public String getId() {
