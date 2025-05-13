@@ -46,6 +46,10 @@ public class CommentController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+    @GetMapping("/{id}/history")
+    public List<EditHistory> getEditHistory(@PathVariable String id) {
+        return commentService.getEditHistory(id);
+    }
 
     @DeleteMapping("/comments/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable String id) {

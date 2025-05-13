@@ -14,6 +14,7 @@ public class Comment {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<EditHistory> editHistory = new ArrayList<>();
     private int upvotes;
     private int downvotes;
 
@@ -39,7 +40,7 @@ public class Comment {
             String fieldName,
             Object oldValue,
             Object newValue,
-            String editedBy 
+            String editedBy
     ) {}
 
     // Getters and Setters
