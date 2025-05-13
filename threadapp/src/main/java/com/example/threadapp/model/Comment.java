@@ -115,5 +115,9 @@ public class Comment {
     public void setDownvotes(int downvotes) {
         this.downvotes = downvotes;
     }
+
+    public List<EditHistory> getEditHistory() {return editHistory;}
+
+    public void setEditHistory(List<EditHistory> editHistory) {this.editHistory = editHistory;}
 }
 
