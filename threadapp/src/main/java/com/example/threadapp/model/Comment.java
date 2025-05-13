@@ -3,6 +3,8 @@ package com.example.threadapp.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "comments")
 public class Comment {
@@ -115,9 +117,13 @@ public class Comment {
     public void setDownvotes(int downvotes) {
         this.downvotes = downvotes;
     }
+    public List<EditHistory> getEditHistory() {
+        return editHistory;
+    }
+    
+    public void setEditHistory(List<EditHistory> editHistory) {
+        this.editHistory = editHistory;
+    }
+    
 
-    public List<EditHistory> getEditHistory() {return editHistory;}
-
-    public void setEditHistory(List<EditHistory> editHistory) {this.editHistory = editHistory;}
 }
-

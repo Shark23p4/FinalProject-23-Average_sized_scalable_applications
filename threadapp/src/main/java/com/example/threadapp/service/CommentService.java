@@ -1,10 +1,12 @@
 package com.example.threadapp.service;
 
 import com.example.threadapp.model.Comment;
+import com.example.threadapp.model.Comment.EditHistory;
 import com.example.threadapp.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -33,14 +35,18 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public Optional<Comment> updateComment(String id, Comment commentDetails) {
-
-      return commentRepository.findById(commentId)
-            .map(existing -> {
-        trackChanges(existing, updatedComment, editorId);
-        return commentRepository.save(existing);
-    })
-            .orElseThrow(() -> new ResourceNotFoundException("Comment not found"));
+    public Optional<Comment> updateComment(String id, Comment updatedComment, String editorId) {
+        return commentRepository.findById(id)
+                .map(existing -> {
+                    trackChanges(existing, updatedComment, editorId);
+                    return commentRepository.save(existing);
+                });
+    }
+    
+public List<EditHistory> getEditHistory(String commentId) {
+    return commentRepository.findById(commentId)
+            .map(Comment::getEditHistory)
+            .orElseThrow();
 }
 
 private void trackChanges(Comment existing, Comment updated, String editorId) {
@@ -50,7 +56,7 @@ private void trackChanges(Comment existing, Comment updated, String editorId) {
         for (Field field : fields) {
             field.setAccessible(true);
 
-
+         
             if (List.of("id", "createdAt", "updatedAt", "editHistory", "childIds").contains(field.getName())) {
                 continue;
             }
@@ -75,21 +81,15 @@ private void trackChanges(Comment existing, Comment updated, String editorId) {
         throw new RuntimeException("Failed to track changes via reflection", e);
     }
 }
-}
-
-    public boolean deleteComment(String id) {
-        if (commentRepository.existsById(id)) {
-            commentRepository.deleteById(id);
-            return true;
-        }
-        return false;
+public boolean deleteComment(String id) {
+    if (commentRepository.existsById(id)) {
+        commentRepository.deleteById(id);
+        return true;
     }
-
-public List<EditHistory> getEditHistory(String commentId) {
-    return commentRepository.findById(commentId)
-            .map(Comment::getEditHistory)
-            .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + commentId));
+    return false;
+}
 }
 
-}
+
+
 

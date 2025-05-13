@@ -1,6 +1,7 @@
 package com.example.threadapp.controller;
 
 import com.example.threadapp.model.Comment;
+import com.example.threadapp.model.Comment.EditHistory;
 import com.example.threadapp.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class CommentController {
 
     @PutMapping("/comments/{id}")
     public ResponseEntity<Comment> updateComment(@PathVariable String id, @RequestBody Comment commentDetails) {
-        return commentService.updateComment(id, commentDetails)
+        return commentService.updateComment(id, commentDetails, id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -59,4 +60,3 @@ public class CommentController {
         return ResponseEntity.notFound().build();
     }
 }
-
