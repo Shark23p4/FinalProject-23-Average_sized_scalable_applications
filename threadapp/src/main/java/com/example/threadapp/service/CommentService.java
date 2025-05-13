@@ -50,7 +50,7 @@ private void trackChanges(Comment existing, Comment updated, String editorId) {
         for (Field field : fields) {
             field.setAccessible(true);
 
-         
+
             if (List.of("id", "createdAt", "updatedAt", "editHistory", "childIds").contains(field.getName())) {
                 continue;
             }
@@ -84,5 +84,12 @@ private void trackChanges(Comment existing, Comment updated, String editorId) {
         }
         return false;
     }
+
+public List<EditHistory> getEditHistory(String commentId) {
+    return commentRepository.findById(commentId)
+            .map(Comment::getEditHistory)
+            .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + commentId));
+}
+
 }
 
