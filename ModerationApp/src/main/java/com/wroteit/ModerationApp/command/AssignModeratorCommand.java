@@ -2,10 +2,9 @@ package com.wroteit.ModerationApp.command;
 
 import com.wroteit.ModerationApp.model.Moderator;
 import com.wroteit.ModerationApp.repository.ModeratorRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 public class AssignModeratorCommand implements ModerationCommand {
+
     private final ModeratorRepository moderatorRepository;
     private final Long userId;
     private final Long communityId;
@@ -18,15 +17,9 @@ public class AssignModeratorCommand implements ModerationCommand {
 
     @Override
     public void execute() {
-
-        if (moderatorRepository.existsByUserIdAndCommunityId(userId, communityId)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "User is already a moderator for this community");
+        if (moderatorRepository.findByUserIdAndCommunityId(userId, communityId).isEmpty()) {
+            Moderator moderator = new Moderator(userId, communityId);
+            moderatorRepository.save(moderator);
         }
-
-
-        Moderator moderator = new Moderator(userId, communityId);
-        moderatorRepository.save(moderator);
-
-        // TODO: Add notification to the user through NotificationApp by kareem
     }
 }

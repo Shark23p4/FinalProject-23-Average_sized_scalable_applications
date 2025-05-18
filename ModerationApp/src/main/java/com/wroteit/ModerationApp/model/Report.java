@@ -1,8 +1,4 @@
-package main.java.com.wroteit.ModerationApp.model;
-
-import java.time.LocalDateTime;
-
-
+package com.wroteit.ModerationApp.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -33,5 +29,59 @@ public class Report {
         this.timestamp = timestamp;
     }
 
-    // Getters and setters omitted for brevity
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getReporterId() {
+        return reporterId;
+    }
+
+    public void setReporterId(Long reporterId) {
+        this.reporterId = reporterId;
+    }
+
+    public Long getReportedEntityId() {
+        return reportedEntityId;
+    }
+
+    public void setReportedEntityId(Long reportedEntityId) {
+        this.reportedEntityId = reportedEntityId;
+    }
+
+    public String getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(String entityType) {
+        this.entityType = entityType;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
 }

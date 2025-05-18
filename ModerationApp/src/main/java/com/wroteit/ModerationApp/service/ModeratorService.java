@@ -1,13 +1,14 @@
 package com.wroteit.ModerationApp.service;
 
+import com.wroteit.ModerationApp.command.*;
 import com.wroteit.ModerationApp.model.Report;
-import com.wroteit.ModerationApp.repository.ReportRepository;
 import com.wroteit.ModerationApp.repository.ModeratorRepository;
+import com.wroteit.ModerationApp.repository.ReportRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ModeratorService {
@@ -27,11 +28,8 @@ public class ModeratorService {
     }
 
     public Report reviewReport(Long reportId, String newStatus) {
-        Optional<Report> optionalReport = reportRepository.findById(reportId);
-        if (optionalReport.isEmpty()) {
-            return null;
-        }
-        Report report = optionalReport.get();
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new IllegalArgumentException("Report not found"));
         report.setStatus(newStatus);
         return reportRepository.save(report);
     }
@@ -45,20 +43,27 @@ public class ModeratorService {
     }
 
     public String assignModerator(Long userId, Long communityId) {
-        // Your logic to assign a moderator
-        return "Moderator " + userId + " assigned to community " + communityId;
+        ModerationCommand command = new AssignModeratorCommand(moderatorRepository, userId, communityId);
+        command.execute();
+        return "Moderator assigned.";
     }
 
     public String banUser(Long userId, Long communityId) {
-        // Your logic to ban user
-        return "User " + userId + " banned from community " + communityId;
+        ModerationCommand command = new BanUserCommand(userId, communityId);
+        command.execute();
+        return "User banned.";
     }
 
     public String deleteContent(String entityType, Long entityId) {
-        return "Deleted " + entityType + " with ID " + entityId;
+        ModerationCommand command = new DeleteContentCommand(entityType, entityId);
+        command.execute();
+        return "Content deleted.";
     }
 
+    @Transactional
     public String moderateReport(Long reportId, Long moderatorId, String action) {
-        return "Moderator " + moderatorId + " performed action '" + action + "' on report " + reportId;
+        ModerationCommand command = new ModerateReportCommand(reportRepository, reportId, moderatorId, action);
+        command.execute();
+        return "Report moderated.";
     }
 }
